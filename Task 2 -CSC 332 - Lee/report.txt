@@ -1,0 +1,9 @@
+ The code for part two has two child processes Q and R and a parent process P. There is no wait in the 
+code therefore the processes run simutaneously causing the code to have a different execution order each time 
+the code is ran. The code processes run in the order that it is forked but it doesn't guarantee the order in 
+which the child process and parent process runs its code. For this code Process Q runs along side process P the
+parent and when both process Q and P finish executing is then process R forked and ran along side its parent. 
+The output for each process is consistent as each process retains their local store of the global variables a and b. 
+This means that when process Q and P ran simutaneously even though varible a was changed in process Q it didn't affect 
+the value of a in process P and vise versa. Process R however inherits the changed values of a and b due to it being forked
+after process Q finish executing.  
