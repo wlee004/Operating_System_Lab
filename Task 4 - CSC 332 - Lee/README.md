@@ -1,7 +1,7 @@
 # Task 4 
 ## William Lee 
 
-Screenshot of Part 1 output: Command Interpreter is able to run linux commands such as ls, date, ls -al, pwd, and etc.
+Screenshot of Part 1 output: Command Interpreter is able to run linux commands such as ls, date, ls -al, pwd, etc and exits upon "quit". 
 
 ![Part 1 Screenshot](part1_ss.PNG)
 
