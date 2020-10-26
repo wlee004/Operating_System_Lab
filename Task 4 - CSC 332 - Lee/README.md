@@ -9,4 +9,4 @@ Screenshot of Part 2 output: Each worker process prints out the average quiz gra
 
 ![Part 2 Screenshot](part2_ss.PNG)
 
-
+Data used in part 2 is in "quiz_grades.txt"
