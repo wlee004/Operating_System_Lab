@@ -21,30 +21,12 @@ int countCommand(char * command){
 }
 
 int main(){
-/*
-	char command[100];
-	printf("Enter command: ");
-	scanf("%[^\n]s", command);
-
-	int count = countCommand(command);
-	char * arg[count + 1];
-	int i = 0; 
-
-	char *ptr = strtok(command, " ");
-	while(ptr != NULL){
-		arg[i] = ptr; 
-		i++;
-		ptr = strtok(NULL, " ");
-	}
-	arg[count] = NULL;
-	execvp(arg[0], arg);
-*/
 		char command[100];
 		printf("Enter command: ");
 		scanf("%[^\n]s", command);
 		char quit[] = "quit";
 
-	while(strcmp(command, "quit") != 0){
+	while(strcmp(command, quit) != 0){
 		int child; 
 		child = fork();
 		if(child == -1){ // failed to fork child process
@@ -66,10 +48,10 @@ int main(){
 		}
 		else{ // parent process
 			wait(NULL);
+			memset(command, 0, 100);
 			printf("Enter command: ");
 			scanf(" %[^\n]s", command);
 		}
-//		memset(command, 0, 100);
 	}
 	return 0;
 }
