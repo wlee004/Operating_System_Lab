@@ -8,47 +8,59 @@
 
 // global variables for this function 
 const int X = 2; // number of chapters from textbook 
-const int Y = 2; // number of quiz per chapter 
-const int student = 10; // number of student (rows) in the data 
+const int Y = 2; // number of hw per chapter 
+
+int countRow(FILE * fp){
+	int count = 0;
+	char c; 
+	while(fscanf(fp, "%c", &c) != EOF	){
+		if(c == '\n'){
+			count++; 
+		}
+	}
+	fseek(fp, 0, SEEK_SET); // reset file pointer 
+	return count; 
+}
 
 float averageColumn(int ** data, int row, int col){
 	float average = 0; 
-	for(int i = 0; i < student; i++){
+	for(int i = 0; i < row; i++){
 		average += data[i][col];
 	}
-	return average / student; 
+	return average / row; 
 }
 
 int main(){
 	FILE * fp; 
 	int column = X * Y;
+
+	fp = fopen("hw_grades.txt", "r");
+	if(fp == NULL){ // failed to open file 
+		fclose(fp);
+		exit(EXIT_FAILURE);
+	}
+
+	int student = countRow(fp);
+
+	// allocate memory to 2d array to put hw grades in
 	int ** data = malloc(student * sizeof(*data));
 	for(int i = 0; i < student; i++){
 		data[i] = malloc(column * sizeof(data[0]));
 	}
 
-	fp = fopen("quiz_grades.txt", "r");
-	
-	if(fp == NULL){ // failed to open file 
-		fclose(fp);
-		exit(EXIT_FAILURE);
-	}
-	
-	// put quiz grades from text file into 2d data array
+	// put hw grades from text file into 2d data array
 	for(int i = 0; i < student; i++){
 		for(int j = 0; j < column; j++){
-			int grade;
-			fscanf(fp, "%d", &grade);
-			data[i][j] = grade; 
+			fscanf(fp, "%d", &data[i][j]);
 		}
 	}
 	fclose(fp);
 
 	for(int i = 0; i < X; i++){ // create X manager processes (1 per chapter)
 		if(fork() == 0){
-			for(int j = 0; j < Y; j++){ // create Y worker processes (1 per quiz)
+			for(int j = 0; j < Y; j++){ // create Y worker processes (1 per hw)
 				if(fork() == 0){
-					printf("Average grades for Chapter %d Quiz %d: %0.2f\n", i+1, j+1, averageColumn(data, student, i+i+j));
+					printf("Average grades for Chapter %d Hw %d: %0.2f\n", i+1, j+1, averageColumn(data, student, i+i+j));
 					exit(0);
 				}
 			}
@@ -68,6 +80,5 @@ int main(){
 		free(data[i]);
 	}
 	free(data);
-
 	return 0; 
 }
