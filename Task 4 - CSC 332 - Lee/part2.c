@@ -10,7 +10,7 @@
 const int X = 2; // number of chapters from textbook 
 const int Y = 2; // number of hw per chapter 
 
-int countRow(FILE * fp){
+int countRow(FILE * fp){ // returns number of rows (students) the grade file has
 	int count = 0;
 	char c; 
 	while(fscanf(fp, "%c", &c) != EOF	){
