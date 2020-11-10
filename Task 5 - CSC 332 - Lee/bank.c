@@ -99,7 +99,7 @@ int main()
 			flag = FALSE;
 			while(flag == FALSE) 
 			{
-				P(attempt);
+				P(transaction);
 				fp3 = fopen("attempt" , "r+");
 				fscanf(fp3, "%d", &N_Att);
 				if(N_Att == 0)
@@ -109,7 +109,7 @@ int main()
 				}
 				else
 				{
-					P(transaction);
+					//P(transaction);
 					printf("Poor SON_1 wants to withdraw money.\n");
 					fp2 = fopen("balance", "r+");
 					fscanf(fp2,"%d", &bal2);
@@ -133,9 +133,9 @@ int main()
 						fprintf(fp3, "%d\n", N_Att);
 						fclose(fp3);
 					}
-					V(transaction);
+					//V(transaction);
 				}
-				V(attempt);
+				V(transaction);
 			}
 		}
 		else
@@ -154,7 +154,7 @@ int main()
 				flag1 = FALSE;
 				while(flag1 == FALSE) 
 				{
-					P(attempt);
+					P(transaction);
 					fp3 = fopen("attempt" , "r+");
 					fscanf(fp3, "%d", &N_Att);
 					if(N_Att == 0)
@@ -164,7 +164,7 @@ int main()
 					}
 					else
 					{
-						P(transaction);
+						//P(transaction);
 						printf("Poor SON_2 wants to withdraw money.\n");
 						fp2 = fopen("balance", "r+");
 						fscanf(fp2,"%d", &bal2);
@@ -189,9 +189,9 @@ int main()
 							fprintf(fp3, "%d\n", N_Att);
 							fclose(fp3);
 						}
-						V(transaction);
+						//V(transaction);
 					}
-					V(attempt);
+					V(transaction);
 				}
 			}
 			else
