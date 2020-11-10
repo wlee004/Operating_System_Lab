@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <time.h>
 #include "sem.h"
 
 #define CHILD      			0  			/* Return value of child proc from fork call */
@@ -12,14 +13,15 @@ FILE *fp1, *fp2, *fp3, *fp4;			/* File Pointers */
 
 int main()
 {
-	int pid;						// Process ID after fork call
-	int i;							// Loop index
-	int N;							// Number of times dad does update
-	int N_Att;						// Number of time sons allowed to do update
-	int status;						// Exit status of child process
-	int bal1, bal2;					// Balance read by processes
-	int flag, flag1;				// End of loop variables
-	int transaction, attempt;  		//semaphore id  
+	int pid;							   // Process ID after fork call
+	int i;								   // Loop index
+	int N;								   // Number of times dad does update
+	int N_Att;							   // Number of time sons allowed to do update
+	int status;							   // Exit status of child process
+	int bal1, bal2;					       // Balance read by processes
+	int flag, flag1;					   // End of loop variables
+	int transaction;  		               // semaphore id  
+	double dad_time, son1_time, son2_time; // wait time per process 
 
 	if((transaction = semget(IPC_PRIVATE, 1, 0666 | IPC_CREAT)) == -1){
 		printf("Failed to create semaphore");
@@ -27,13 +29,6 @@ int main()
 	}
 
 	sem_create(transaction, 1);
-
-	if((attempt = semget(IPC_PRIVATE, 1, 0666 | IPC_CREAT)) == -1){
-		printf("Failed to create semaphore");
-		exit(1);
-	}
-
-	sem_create(attempt, 1);
 	
 	//Initialize the file balance to be $100
 	fp1 = fopen("balance","w");
@@ -60,8 +55,9 @@ int main()
 	
 		N=5;
 		for(i=1;i<=N; i++)
-		{
-			P(transaction);
+		{   
+			P(transaction); // start critical section 
+			printf("HERE");
 			printf("Dear old dad is trying to do update.\n");
 			fp1 = fopen("balance", "r+");
 			fscanf(fp1, "%d", &bal2);
@@ -76,7 +72,8 @@ int main()
 			fclose(fp1);
 
 			printf("Dear old dad is done doing update. \n");
-			V(transaction);
+
+			V(transaction); // end critcal section 
 
 			sleep(rand()%5);	/* Go have coffee for 0-4 sec. */
 			
@@ -99,7 +96,8 @@ int main()
 			flag = FALSE;
 			while(flag == FALSE) 
 			{
-				P(transaction);
+				P(transaction); // start critical section 
+
 				fp3 = fopen("attempt" , "r+");
 				fscanf(fp3, "%d", &N_Att);
 				if(N_Att == 0)
@@ -109,7 +107,6 @@ int main()
 				}
 				else
 				{
-					//P(transaction);
 					printf("Poor SON_1 wants to withdraw money.\n");
 					fp2 = fopen("balance", "r+");
 					fscanf(fp2,"%d", &bal2);
@@ -133,9 +130,8 @@ int main()
 						fprintf(fp3, "%d\n", N_Att);
 						fclose(fp3);
 					}
-					//V(transaction);
 				}
-				V(transaction);
+				V(transaction); // end critical section 
 			}
 		}
 		else
@@ -154,7 +150,8 @@ int main()
 				flag1 = FALSE;
 				while(flag1 == FALSE) 
 				{
-					P(transaction);
+					P(transaction); // start critical section 
+
 					fp3 = fopen("attempt" , "r+");
 					fscanf(fp3, "%d", &N_Att);
 					if(N_Att == 0)
@@ -164,7 +161,6 @@ int main()
 					}
 					else
 					{
-						//P(transaction);
 						printf("Poor SON_2 wants to withdraw money.\n");
 						fp2 = fopen("balance", "r+");
 						fscanf(fp2,"%d", &bal2);
@@ -189,9 +185,8 @@ int main()
 							fprintf(fp3, "%d\n", N_Att);
 							fclose(fp3);
 						}
-						//V(transaction);
 					}
-					V(transaction);
+					V(transaction); // end critical section
 				}
 			}
 			else
