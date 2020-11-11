@@ -37,6 +37,6 @@ Here N is the number of attempts the son processes can update the bank account, 
 
 *** 
 
-The report for this lab is in report.pdf 
+### Report 
 
 [embed]report.pdf[/embed]
