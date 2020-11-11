@@ -36,7 +36,8 @@ Screenshot of Part 2, N = 20
 Here N is the number of attempts the son processes can update the bank account, the dad process is constant at 5 attempts. The screenshots show the output of the amount of times each process waited during the execution of the entire program. 
 
 *** 
-
 ### Report 
 
 ![Report - Task 5](report.pdf)
+
+Note: The report is in the file "report.pdf" 
