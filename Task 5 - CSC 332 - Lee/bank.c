@@ -89,7 +89,7 @@ int main()
 			}
 
 			// increment son 2 wait time 
-			if(N_Att){
+			if(N_Att > 1){
 				fpson2 = fopen("son2_time", "r+");
 				fscanf(fpson2,"%d", &son2_time);
 				fseek(fpson2,0L, 0);
