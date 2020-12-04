@@ -26,9 +26,12 @@ int random_number(int lower, int upper){
 // function for agent thread
 void * agentFunction(){
 	int num;
+	
+	// put all smokers to sleep 
 	pthread_mutex_lock(&smoker_paper);
 	pthread_mutex_lock(&smoker_match);
 	pthread_mutex_lock(&smoker_tobacco); 
+
 	while(num_supply > 0){
 		pthread_mutex_lock(&agent);
 		pthread_mutex_lock(&lock);
@@ -36,31 +39,34 @@ void * agentFunction(){
 		num = random_number(1,3);
 		if(num == 1){
 			printf("Agent puts down tobacco and paper on table\n");
+			// wake up smoker with match
 			pthread_mutex_unlock(&smoker_match);
 		}
 		else if(num == 2){
 			printf("Agent puts down tobacco and match on table\n");
+			// wake up smoker with paper
 			pthread_mutex_unlock(&smoker_paper);
 		}
 		else{
 			printf("Agent puts down match and paper on table\n");
+			// wake up smoker with tobacco
 			pthread_mutex_unlock(&smoker_tobacco);
 		}
-		num_supply--;
+		num_supply--; 
 		pthread_mutex_unlock(&agent);
 		pthread_mutex_unlock(&lock);
-		pthread_mutex_lock(&agent);
+		pthread_mutex_lock(&agent); // put agent to sleep
 	}
 }
 
 // function for smoker with paper thread
 void * smokerPaperFunction(){
 	while(num_supply > 0){
-		pthread_mutex_lock(&smoker_paper);
+		pthread_mutex_lock(&smoker_paper); // checks if smoker with paper can go
 		pthread_mutex_lock(&lock);
 		printf("Smoker picks up tobacco and match\n");
 		printf("Smoker with paper is smoking...\n\n");
-		pthread_mutex_unlock(&agent);
+		pthread_mutex_unlock(&agent); // wake up agent
 		pthread_mutex_unlock(&lock);
 	}
 }
@@ -68,11 +74,11 @@ void * smokerPaperFunction(){
 // function for smoker with match thread
 void * smokerMatchFunction(){
 	while(num_supply > 0){
-		pthread_mutex_lock(&smoker_match);
+		pthread_mutex_lock(&smoker_match); // checks if smoker with match can go
 		pthread_mutex_lock(&lock);
 		printf("Smoker picks up tobacco and paper\n");
 		printf("Smoker with match is smoking...\n\n");
-		pthread_mutex_unlock(&agent);
+		pthread_mutex_unlock(&agent); // wake up agent
 		pthread_mutex_unlock(&lock); 
 	}
 }
@@ -80,11 +86,11 @@ void * smokerMatchFunction(){
 // function for smoker with tobacco thread
 void * smokerTobaccoFunction(){
 	while(num_supply > 0){
-		pthread_mutex_lock(&smoker_tobacco);
+		pthread_mutex_lock(&smoker_tobacco); // checks if smoker with tobacco can go
 		pthread_mutex_lock(&lock);
 		printf("Smoker picks up match and paper\n");
 		printf("Smoker with tobacco is smoking...\n\n");
-		pthread_mutex_unlock(&agent);
+		pthread_mutex_unlock(&agent); // wake up agent
 		pthread_mutex_unlock(&lock); 
 	}
 }
@@ -102,26 +108,11 @@ int main(){
 	pthread_t thread[4];
 
 	for(int i = 0; i < 4; i++){
+		// create thread in order of agent, match, paper, and tobacco
 		pthread_create(&thread[i], NULL, functions[i], NULL);
 	}
 	
-	pthread_join(thread[0], NULL);
-	
-
-/*
-	pthread_t agentThread; 
-	pthread_t paperThread; 
-	pthread_t tobaccoThread; 
-	pthread_t matchThread; 
-
-	pthread_create(&agentThread, NULL, agentFunction, NULL);
-	pthread_create(&paperThread, NULL, smokerPaperFunction, NULL);
-	pthread_create(&matchThread, NULL, smokerMatchFunction, NULL);
-	pthread_create(&tobaccoThread, NULL, smokerTobaccoFunction, NULL);
-
-	pthread_join(agentThread, NULL);
-*/
-	
+	pthread_join(thread[0], NULL); // wait for agent to finish
 
 	return 0; 
 }
